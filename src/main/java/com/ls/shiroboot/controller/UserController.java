@@ -20,6 +20,7 @@ public class UserController {
         UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),
                 user.getPassword());
         try {
+            token.setRememberMe(user.isRememberMe());
             subject.login(token);
 
         }catch (AuthenticationException e) {
