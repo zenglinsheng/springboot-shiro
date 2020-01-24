@@ -1,4 +1,4 @@
-package com.ls.shiroboot.service;
+package com.ls.shiroboot.serializer;
 
 import org.apache.shiro.io.SerializationException;
 import org.springframework.data.redis.serializer.RedisSerializer;
