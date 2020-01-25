@@ -1,4 +1,4 @@
-package com.ls.shiroboot.shiro;
+package com.ls.shiroboot.realm;
 
 import com.ls.shiroboot.mapper.PermissionMapper;
 import com.ls.shiroboot.mapper.RoleMapper;
@@ -36,6 +36,7 @@ public class CustomRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        System.out.println("从数据库中获取授权数据！");
         String userName = (String) principalCollection.getPrimaryPrincipal();
         //从数据库或缓存中获取角色数据
         Role role = roleMapper.selectRolesByUsername(userName);

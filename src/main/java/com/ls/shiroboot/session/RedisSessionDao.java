@@ -19,7 +19,7 @@ public class RedisSessionDao extends AbstractSessionDAO {
     private JedisUtil jedisUtil;
 
     private final static String SHIRO_SESSION_PREFIX = "imooc_session_";
-    private final static Integer SHIRO_SESSION_EXPIRE = 600;
+    private final static Integer SHIRO_SESSION_EXPIRE = 3000;
 
     private String getKey(String key){
         return SHIRO_SESSION_PREFIX + key;

@@ -1,17 +1,20 @@
 package com.ls.shiroboot.config;
 
+import com.ls.shiroboot.cache.RedisCacheManager;
 import com.ls.shiroboot.filter.PerssionsOrFilter;
 import com.ls.shiroboot.filter.RolesOrFilter;
 import com.ls.shiroboot.session.CustomSessionManager;
 import com.ls.shiroboot.session.RedisSessionDao;
-import com.ls.shiroboot.shiro.CustomRealm;
+import com.ls.shiroboot.realm.CustomRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -46,13 +49,19 @@ public class ShiroConfig {
         return new EhCacheManager();
     }
 
+    @Bean
+    public RedisCacheManager getRedisCache() {
+        return new RedisCacheManager();
+    }
+
     //权限管理，配置主要是Realm的管理认证
     @Bean
     public DefaultWebSecurityManager securityManager(Realm myShiroRealm, CustomSessionManager sessionManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(myShiroRealm);
-        securityManager.setCacheManager(getCache());
+        securityManager.setCacheManager(getRedisCache());
         securityManager.setSessionManager(sessionManager);
+        securityManager.setRememberMeManager(getCookieRememberManager());
         return securityManager;
     }
 
@@ -133,6 +142,21 @@ public class ShiroConfig {
     public RedisSessionDao sessionDAO() {
         RedisSessionDao redisSessionDao = new RedisSessionDao();
         return redisSessionDao;
+    }
+
+    //shiro自动登录
+    @Bean
+    public CookieRememberMeManager getCookieRememberManager() {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(getSimpleCookie());
+        return cookieRememberMeManager;
+    }
+
+    @Bean
+    public SimpleCookie getSimpleCookie() {
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        simpleCookie.setMaxAge(30000000);
+        return simpleCookie;
     }
 
 }
